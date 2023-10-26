@@ -3,23 +3,21 @@
 
 .text
 	addi t0, zero, 1 # Variable para comparar n !== 1
-	addi s0, zero, 11 # Número total de discos "n"
+	addi s0, zero, 8 # Número total de discos "n"
 	addi t1, zero, 0 # Variable temporal para almacenar apuntador durante el intercambio
 	
-	#create memory for arrays
-	lui a3, 0x10010
-	slli t6, s0, 2
-	add a4, a3, t6
-	add a5, a4, t6
-	add t5, zero, s0
-	
-	
-for:	beqz t5, hanoiTower
-	sw t5, 0(a3)
-	addi a3, a3, 4
-	addi t5, t5, -1
-	jal for
-	lui a3, 0x10010
+	#Crear memoria para los Areglos INICIO, AUXILIAR, DESTINO basado en la cantidad de discos
+	lui a3, 0x10010 	#Cargar en a3 (INICIO) el apuntador a la primera posicion de la memoria (OX10010)
+	slli t6, s0, 2		#Calcular en t6 el offset de el espacio en memoria que se debe crear basado en la cant de discos
+	add a4, a3, t6		#Cargar en a4 (AUXILIAR) la direccion de inicio mas el offset
+	add a5, a4, t6		#Cargar en a5 (DESTINO) la direccion de a4 (AUXILIAR) mas el offset
+	add t5, zero, s0	#Cargar en t5 el valor de s0 (num de discos) ya que sea la variable i del for
+	#Cargar en el arreglo INICIO los valores iniciales 
+for:	beqz t5, hanoiTower	#Si t5(i) = 0 continuamos con la ejecucion del codigo yendo a hanoiTower
+	sw t5, 0(a3)		#Guardamos el valor de t5 en la primera posicion del arreglo INICIO
+	addi a3, a3, 4		#Apuntamos a la siguiente posicion de el arreglo INICIO
+	addi t5, t5, -1		#Restamos 1 a t5 -> i--
+	jal for			#Regresamos al for	
 
 hanoiTower: bne s0, t0, loop # Caso base para la recursión
 	# Ejecutar movimiento de disco de INICIO a DESTINO
