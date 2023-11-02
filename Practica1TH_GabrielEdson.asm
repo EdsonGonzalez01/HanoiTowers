@@ -3,7 +3,7 @@
 
 .text
 	addi t0, zero, 1 # Variable para comparar n !== 1
-	addi s0, zero, 8 # Número total de discos "n"
+	addi s0, zero, 3 # Número total de discos "n"
 	addi t1, zero, 0 # Variable temporal para almacenar apuntador durante el intercambio
 	
 	#Crear memoria para los Areglos INICIO, AUXILIAR, DESTINO basado en la cantidad de discos
@@ -13,11 +13,14 @@
 	add a5, a4, t6		#Cargar en a5 (DESTINO) la direccion de a4 (AUXILIAR) mas el offset
 	add t5, zero, s0	#Cargar en t5 el valor de s0 (num de discos) ya que sea la variable i del for
 	#Cargar en el arreglo INICIO los valores iniciales 
-for:	beqz t5, hanoiTower	#Si t5(i) = 0 continuamos con la ejecucion del codigo yendo a hanoiTower
+for:	beqz t5, init	#Si t5(i) = 0 continuamos con la ejecucion del codigo yendo a hanoiTower
 	sw t5, 0(a3)		#Guardamos el valor de t5 en la primera posicion del arreglo INICIO
 	addi a3, a3, 4		#Apuntamos a la siguiente posicion de el arreglo INICIO
 	addi t5, t5, -1		#Restamos 1 a t5 -> i--
 	jal for			#Regresamos al for	
+
+init:	jal hanoiTower
+	jal exit # Fin del programa
 
 hanoiTower: bne s0, t0, loop # Caso base para la recursión
 	# Ejecutar movimiento de disco de INICIO a DESTINO
@@ -26,7 +29,7 @@ hanoiTower: bne s0, t0, loop # Caso base para la recursión
 	sw zero, 0(a3) # Colocar un cero en la posición del disco en la torre A
 	sw t5, 0(a5) # Guardar el disco en la torre C
 	addi a5, a5, 4 # Mover a la siguiente posición en la torre C
-	jalr ra # Retornar
+	jalr ra
 loop:	addi sp, sp, -8 # Reservar espacio en la pila para almacenar la dirección de retorno
 	sw ra, 4(sp) # Guardar el registro de dirección de retorno en la pila
 	sw s0, 0(sp) # Guardar el número de discos en la pila
